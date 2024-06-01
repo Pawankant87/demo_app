@@ -108,8 +108,8 @@ class _CustomerFormState extends State<CustomerForm> {
             onSaved: (value) => name = value!,
           ),
           TextFormField(
-            initialValue: mobile,
-            decoration: const InputDecoration(labelText: 'Mobile'),
+            initialValue: email,
+            decoration: const InputDecoration(labelText: 'Email'),
             validator: (value) {
               if (value!.isEmpty) {
                 return 'Please enter an email address';
@@ -123,8 +123,8 @@ class _CustomerFormState extends State<CustomerForm> {
             onSaved: (value) => mobile = value!,
           ),
           TextFormField(
-            initialValue: email,
-            decoration: const InputDecoration(labelText: 'Email'),
+            initialValue: mobile,
+            decoration: const InputDecoration(labelText: 'Mobile'),
             validator: (String? value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter a number';

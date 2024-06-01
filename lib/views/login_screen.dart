@@ -51,6 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextFormField(
                     controller: emailController,
                     textAlignVertical: TextAlignVertical.center,
+                    keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(vertical: 10),
                       prefixIcon: const Icon(Icons.email_outlined),
@@ -86,6 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: passwordController,
                     obscureText: _obscured,
                     textAlignVertical: TextAlignVertical.center,
+                    keyboardType: TextInputType.visiblePassword,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(vertical: 10),
                       prefixIcon: const Icon(Icons.lock_outlined),

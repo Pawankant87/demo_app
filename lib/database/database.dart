@@ -3,12 +3,17 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
+  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
   static Database? _database;
 
+  DatabaseHelper._privateConstructor();
+
+  factory DatabaseHelper() {
+    return instance;
+  }
+
   Future<Database> get database async {
-    if (_database != null) {
-      return _database!;
-    }
+    if (_database != null) return _database!;
 
     _database = await _initDatabase();
     return _database!;
@@ -25,7 +30,7 @@ class DatabaseHelper {
           mobile TEXT,
           email TEXT,
           address TEXT,
-          imageUrl TEXT,
+          imageUrl TEXT
         )
       ''');
     });
@@ -38,26 +43,46 @@ class DatabaseHelper {
 
   Future<void> deleteCustomer(int id) async {
     final db = await database;
-    await db.delete(
-      'customers',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    try {
+      await db.delete(
+        'customers',
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    } catch (e) {
+      throw Exception('Failed to delete customer: $e');
+    }
   }
 
   Future<int> updateCustomer(Customer customer) async {
     final db = await database;
-    return await db.update(
-      'customers',
-      customer.toMap(),
-      where: 'id = ?',
-      whereArgs: [customer.id],
-    );
+    try {
+      return await db.update(
+        'customers',
+        customer.toMap(),
+        where: 'id = ?',
+        whereArgs: [customer.id],
+      );
+    } catch (e) {
+      throw Exception('Failed to update customer: $e');
+    }
   }
 
   Future<List<Customer>> getCustomers() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('customers');
-    return List.generate(maps.length, (index) => Customer.fromMap(maps[index]));
+    try {
+      final List<Map<String, dynamic>> maps = await db.query('customers');
+      return List.generate(maps.length, (index) => Customer.fromMap(maps[index]));
+    } catch (e) {
+      throw Exception('Failed to fetch customers: $e');
+    }
+  }
+
+  Future<void> close() async {
+    final db = _database;
+    if (db != null) {
+      await db.close();
+      _database = null;
+    }
   }
 }

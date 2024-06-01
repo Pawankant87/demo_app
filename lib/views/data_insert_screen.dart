@@ -20,8 +20,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
 
   late DatabaseHelper databaseHelper;
   String currentAddress = '';
-  double latitude = 0.0;
-  double longitude = 0.0;
+
   File? imageFile;
 
   TextEditingController fullNameController = TextEditingController();
@@ -134,6 +133,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                 // Other fields
                 TextFormField(
                   controller: addressController,
+                  keyboardType: TextInputType.streetAddress,
                   decoration: const InputDecoration(
                     labelText: 'Address',
                   ),
@@ -239,30 +239,26 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if (formkey.currentState!.validate()) {
-                        try {
-                          if (imageFile != null) {
-                            await databaseHelper.insertCustomer(Customer(
-                              name: fullNameController.text,
-                              mobile: mobileNoController.text,
-                              email: emailController.text,
-                              address: addressController.text,
-                              imageUrl: imageFile!.path.toString(),
-                            ));
-                            Fluttertoast.showToast(msg: 'Customer added successfully', gravity: ToastGravity.BOTTOM);
-                            fullNameController.clear();
-                            mobileNoController.clear();
-                            emailController.clear();
-                            addressController.clear();
-                            Get.offAllNamed(RoutesClass.getCustomerListPageRoute());
-                          } else {
-                            Fluttertoast.showToast(
-                              msg: "Plase select Image",
-                              toastLength: Toast.LENGTH_LONG,
-                              gravity: ToastGravity.BOTTOM,
-                            );
-                          }
-                        } catch (e) {
-                          Fluttertoast.showToast(msg: 'Failed to add customer: $e', gravity: ToastGravity.BOTTOM);
+                        if (imageFile != null) {
+                          await databaseHelper.insertCustomer(Customer(
+                            name: fullNameController.text,
+                            mobile: mobileNoController.text,
+                            email: emailController.text,
+                            address: addressController.text,
+                            imageUrl: imageFile!.path.toString(),
+                          ));
+                          Fluttertoast.showToast(msg: 'Customer added successfully', gravity: ToastGravity.BOTTOM);
+                          fullNameController.clear();
+                          mobileNoController.clear();
+                          emailController.clear();
+                          addressController.clear();
+                          Get.offAllNamed(RoutesClass.getCustomerListPageRoute());
+                        } else {
+                          Fluttertoast.showToast(
+                            msg: "Plase select Image",
+                            toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.BOTTOM,
+                          );
                         }
                       }
                     },

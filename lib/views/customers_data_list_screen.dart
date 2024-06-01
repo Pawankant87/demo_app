@@ -29,11 +29,13 @@ class _CustomerListPageState extends State<CustomerListPage> {
     _loadCustomers();
   }
 
-  void _loadCustomers() async {
-    final List<Customer> loadedCustomers = await databaseHelper.getCustomers();
-    setState(() {
-      customers = loadedCustomers;
-    });
+  Future<void> _loadCustomers() async {
+    final customer = await DatabaseHelper().getCustomers();
+    if (mounted) {
+      setState(() {
+        customers = customer;
+      });
+    }
   }
 
   @override
