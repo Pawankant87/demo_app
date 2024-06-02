@@ -1,4 +1,4 @@
-import 'package:demo_app/model/customer_model.dart';
+import 'package:demo_app/model/blogs_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -20,61 +20,60 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDatabase() async {
-    String path = join(await getDatabasesPath(), 'customer_database.db');
+    String path = join(await getDatabasesPath(), 'blogs_database.db');
 
     return await openDatabase(path, version: 1, onCreate: (db, version) async {
       await db.execute('''
-        CREATE TABLE customers(
+        CREATE TABLE blogs(
           id INTEGER PRIMARY KEY,
-          name TEXT,
-          mobile TEXT,
-          email TEXT,
-          address TEXT,
+          title TEXT,
+          body TEXT,
           imageUrl TEXT
         )
       ''');
     });
   }
 
-  Future<int> insertCustomer(Customer customer) async {
+  Future<int> insertBlogs(BlogsModel blogs) async {
     final db = await database;
-    return await db.insert('customers', customer.toMap());
+    return await db.insert('blogs', blogs.toMap());
   }
 
-  Future<void> deleteCustomer(int id) async {
+  Future<void> deleteBlogs(int id) async {
     final db = await database;
     try {
       await db.delete(
-        'customers',
+        'blogs',
         where: 'id = ?',
         whereArgs: [id],
       );
     } catch (e) {
-      throw Exception('Failed to delete customer: $e');
+      throw Exception('Failed to delete blogs: $e');
     }
   }
 
-  Future<int> updateCustomer(Customer customer) async {
+  Future<int> updateBlogs(blogs) async {
     final db = await database;
     try {
       return await db.update(
-        'customers',
-        customer.toMap(),
+        'blogs',
+        blogs.toMap(),
         where: 'id = ?',
-        whereArgs: [customer.id],
+        whereArgs: [blogs.id],
       );
     } catch (e) {
-      throw Exception('Failed to update customer: $e');
+      throw Exception('Failed to update blogs: $e');
     }
   }
 
-  Future<List<Customer>> getCustomers() async {
+  Future<List<BlogsModel>> getblogs() async {
     final db = await database;
     try {
-      final List<Map<String, dynamic>> maps = await db.query('customers');
-      return List.generate(maps.length, (index) => Customer.fromMap(maps[index]));
+      final List<Map<String, dynamic>> maps = await db.query('blogs');
+      List<BlogsModel> blogs = List.generate(maps.length, (index) => BlogsModel.fromMap(maps[index]));
+      return blogs.reversed.toList();
     } catch (e) {
-      throw Exception('Failed to fetch customers: $e');
+      throw Exception('Failed to fetch blogs: $e');
     }
   }
 

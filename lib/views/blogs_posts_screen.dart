@@ -1,32 +1,25 @@
 import 'dart:io';
 import 'package:demo_app/database/database.dart';
-import 'package:demo_app/model/customer_model.dart';
+import 'package:demo_app/model/blogs_model.dart';
 import 'package:demo_app/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class AddCustomerPage extends StatefulWidget {
-  const AddCustomerPage({super.key});
+class AddBlogPostScreen extends StatefulWidget {
+  const AddBlogPostScreen({super.key});
 
   @override
-  State createState() => _AddCustomerPageState();
+  State createState() => _AddBlogPostScreenState();
 }
 
-class _AddCustomerPageState extends State<AddCustomerPage> {
+class _AddBlogPostScreenState extends State<AddBlogPostScreen> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
-
   late DatabaseHelper databaseHelper;
-  String currentAddress = '';
-
   File? imageFile;
-
-  TextEditingController fullNameController = TextEditingController();
-  TextEditingController mobileNoController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
+  TextEditingController bodyController = TextEditingController();
 
   @override
   void initState() {
@@ -36,9 +29,8 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
 
   @override
   void dispose() {
-    fullNameController.dispose();
-    mobileNoController.dispose();
-    emailController.dispose();
+    titleController.dispose();
+    bodyController.dispose();
     super.dispose();
   }
 
@@ -70,7 +62,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Add Customer'),
+        title: const Text('Add Blog Post'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -87,62 +79,41 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextFormField(
-                  controller: fullNameController,
-                  keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(labelText: 'Full Name'),
+                  controller: titleController,
+                  decoration: const InputDecoration(labelText: 'Title'),
                   validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter Full Name';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: mobileNoController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'Mobile No'),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                    LengthLimitingTextInputFormatter(10),
-                  ],
-                  validator: (String? value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a number';
-                    }
-                    if (!RegExp(r'^\d{10}$').hasMatch(value)) {
-                      return 'Please enter a valid 10-digit number';
+                      return 'Please enter a title';
                     }
                     return null;
                   },
                 ),
-                TextFormField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(labelText: 'Email ID'),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter an email address';
-                    }
-                    final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$');
-                    if (!emailRegex.hasMatch(value)) {
-                      return 'Please enter a valid email address';
-                    }
-                    return null;
-                  },
-                ),
-                // Other fields
-                TextFormField(
-                  controller: addressController,
-                  keyboardType: TextInputType.streetAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'Address',
+                const SizedBox(height: 20),
+                const Text('Body'),
+                const SizedBox(height: 10),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    border: Border.all(
+                      color: Colors.grey,
+                      width: 1.0,
+                    ),
                   ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please wait loading address';
-                    }
-                    return null;
-                  },
+                  child: TextFormField(
+                    controller: bodyController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter your blog post content...',
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                      border: InputBorder.none,
+                    ),
+                    maxLines: 10,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the body text';
+                      }
+                      return null;
+                    },
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Padding(
@@ -151,36 +122,37 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                     child: GestureDetector(
                       onTap: () {
                         Get.defaultDialog(
-                            title: 'Pick Image',
-                            content: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Icon(Icons.camera),
-                                  TextButton(
-                                    onPressed: () async {
-                                      _pickImage(ImageSource.camera);
-                                    },
-                                    child: const Text("Camera"),
+                          title: 'Pick Image',
+                          content: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Icon(Icons.camera),
+                                TextButton(
+                                  onPressed: () async {
+                                    _pickImage(ImageSource.camera);
+                                  },
+                                  child: const Text("Camera"),
+                                ),
+                                SizedBox(
+                                  height: 50,
+                                  child: VerticalDivider(
+                                    thickness: 2,
+                                    color: Theme.of(context).colorScheme.secondary,
                                   ),
-                                  SizedBox(
-                                    height: 50,
-                                    child: VerticalDivider(
-                                      thickness: 2,
-                                      color: Theme.of(context).colorScheme.secondary,
-                                    ),
-                                  ),
-                                  const Icon(Icons.photo_library),
-                                  TextButton(
-                                    onPressed: () async {
-                                      _pickImage(ImageSource.gallery);
-                                    },
-                                    child: const Text("Gallery"),
-                                  ),
-                                ],
-                              ),
-                            ));
+                                ),
+                                const Icon(Icons.photo_library),
+                                TextButton(
+                                  onPressed: () async {
+                                    _pickImage(ImageSource.gallery);
+                                  },
+                                  child: const Text("Gallery"),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
                       },
                       child: isImage == false
                           ? TextButton(
@@ -240,19 +212,15 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                     onPressed: () async {
                       if (formkey.currentState!.validate()) {
                         if (imageFile != null) {
-                          await databaseHelper.insertCustomer(Customer(
-                            name: fullNameController.text,
-                            mobile: mobileNoController.text,
-                            email: emailController.text,
-                            address: addressController.text,
-                            imageUrl: imageFile!.path.toString(),
+                          await databaseHelper.insertBlogs(BlogsModel(
+                            title: titleController.text,
+                            body: bodyController.text,
+                            imageUrl: imageFile!.path,
                           ));
-                          Fluttertoast.showToast(msg: 'Customer added successfully', gravity: ToastGravity.BOTTOM);
-                          fullNameController.clear();
-                          mobileNoController.clear();
-                          emailController.clear();
-                          addressController.clear();
-                          Get.offAllNamed(RoutesClass.getCustomerListPageRoute());
+                          Fluttertoast.showToast(msg: 'blogs added successfully', gravity: ToastGravity.BOTTOM);
+                          titleController.clear();
+                          bodyController.clear();
+                          Get.offAllNamed(RoutesClass.getBlogsHomeScreenRoute());
                         } else {
                           Fluttertoast.showToast(
                             msg: "Plase select Image",
@@ -262,7 +230,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                         }
                       }
                     },
-                    child: const Text('Add Customer'),
+                    child: const Text('Add Blog Post'),
                   ),
                 ),
               ],
