@@ -1,4 +1,4 @@
-import 'package:demo_app/model/blogs_model.dart';
+import 'package:demo_app/model/blogs_data_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 

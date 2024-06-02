@@ -1,6 +1,5 @@
 import 'dart:io';
-
-import 'package:demo_app/model/blogs_model.dart';
+import 'package:demo_app/model/blogs_data_model.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';

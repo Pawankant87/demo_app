@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:demo_app/database/database.dart';
-import 'package:demo_app/model/blogs_model.dart';
+import 'package:demo_app/model/blogs_data_model.dart';
 import 'package:demo_app/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
