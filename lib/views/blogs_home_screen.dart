@@ -93,76 +93,83 @@ class _BlogsHomeScreenState extends State<BlogsHomeScreen> {
                 final blogPost = blogPosts[index];
                 return Card(
                   margin: const EdgeInsets.all(10.0),
-                  child: Stack(
+                  child: Column(
                     children: [
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: PopupMenuButton<String>(
-                          onSelected: (value) {
-                            if (value == 'edit') {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => BlogsUpdateScreen(
-                                    blogPost: blogPosts[index],
-                                  ),
-                                ),
-                              );
-                            } else if (value == 'delete') {
-                              _showDeleteConfirmationDialog(blogPost);
-                            }
-                          },
-                          itemBuilder: (BuildContext context) {
-                            return [
-                              const PopupMenuItem(
-                                value: 'edit',
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.edit),
-                                    SizedBox(width: 8),
-                                    Text('Edit'),
-                                  ],
-                                ),
-                              ),
-                              const PopupMenuItem(
-                                value: 'delete',
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.delete),
-                                    SizedBox(width: 8),
-                                    Text('Delete'),
-                                  ],
-                                ),
-                              ),
-                            ];
-                          },
-                        ),
-                      ),
-                      Column(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ListTile(
-                            title: Text(
-                              blogPost.title,
-                              style: const TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            subtitle: Text(
-                              blogPost.body,
-                              style: const TextStyle(fontSize: 16.0),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  title: Text(
+                                    blogPost.title,
+                                    style: const TextStyle(
+                                      fontSize: 24.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    blogPost.body,
+                                    style: const TextStyle(fontSize: 16.0),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.file(
-                                File(blogPost.imageUrl),
-                              ),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: PopupMenuButton<String>(
+                              onSelected: (value) {
+                                if (value == 'edit') {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => BlogsUpdateScreen(
+                                        blogPost: blogPosts[index],
+                                      ),
+                                    ),
+                                  );
+                                } else if (value == 'delete') {
+                                  _showDeleteConfirmationDialog(blogPost);
+                                }
+                              },
+                              itemBuilder: (BuildContext context) {
+                                return [
+                                  const PopupMenuItem(
+                                    value: 'edit',
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.edit),
+                                        SizedBox(width: 8),
+                                        Text('Edit'),
+                                      ],
+                                    ),
+                                  ),
+                                  const PopupMenuItem(
+                                    value: 'delete',
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.delete),
+                                        SizedBox(width: 8),
+                                        Text('Delete'),
+                                      ],
+                                    ),
+                                  ),
+                                ];
+                              },
                             ),
                           ),
                         ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.file(
+                            File(blogPost.imageUrl),
+                          ),
+                        ),
                       ),
                     ],
                   ),
